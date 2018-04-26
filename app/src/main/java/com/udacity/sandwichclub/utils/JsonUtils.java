@@ -46,10 +46,15 @@ public class JsonUtils {
                 alsoKnownAsList.add(sandwichArray.getString(i));
             }
 
-            // Checking to see if any data was added to the list. Add only if there is data.
-            if(!alsoKnownAsList.isEmpty()) {
-                sandwich.setAlsoKnownAs(alsoKnownAsList);
+            // Checking to see if any data was added to the list. If there is no data put One String
+            // with a space in it to fix any null pointer exceptions.
+            if(alsoKnownAsList.isEmpty()) {
+                alsoKnownAsList.add(" ");
             }
+
+            // Now add alsoKnownAsList to the sandwich object
+            sandwich.setAlsoKnownAs(alsoKnownAsList);
+
 
 
             // We were done with object "name". Going back to the first object
@@ -71,15 +76,18 @@ public class JsonUtils {
                 ingredientsList.add(sandwichIngredients.getString(i));
             }
 
-            // Make sure there are any ingredients in the list before proceeding
-            if(!ingredientsList.isEmpty()) {
-                sandwich.setIngredients(ingredientsList);
+            // Make sure there are any ingredients in the list before proceeding. If the list is
+            // empty, then put one empty String with a space in it to remove any null pointer exceptions
+            if(ingredientsList.isEmpty()) {
+                ingredientsList.add(" ");
             }
+            sandwich.setIngredients(ingredientsList);
 
 
         } catch (JSONException e) {
             // Catch any errors if JSON caused an error
             e.printStackTrace();
+            //Return null if you cannot continue
             return null;
         }
 
