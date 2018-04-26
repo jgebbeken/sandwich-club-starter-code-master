@@ -80,6 +80,7 @@ public class JsonUtils {
         } catch (JSONException e) {
             // Catch any errors if JSON caused an error
             e.printStackTrace();
+            return null;
         }
 
 
