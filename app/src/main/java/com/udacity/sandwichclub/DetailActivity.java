@@ -2,7 +2,9 @@ package com.udacity.sandwichclub;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,13 +19,26 @@ public class DetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_POSITION = "extra_position";
     private static final int DEFAULT_POSITION = -1;
+    private String items;
+
+    // Setup the TextViews
+    private TextView tvDescription;
+    private TextView tvOrigin;
+    private TextView tvAka;
+    private TextView tvIngredients;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ImageView ingredientsIv = findViewById(R.id.image_iv);
+        tvDescription = findViewById(R.id.description_tv);
+        tvOrigin = findViewById(R.id.origin_tv);
+        tvAka = findViewById(R.id.also_known_tv);
+        tvIngredients = findViewById(R.id.ingredients_tv);
+
 
 
         Intent intent = getIntent();
@@ -62,11 +77,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private void populateUI(Sandwich sandwich) {
 
-        // Setup the TextViews
-        TextView tvDescription = findViewById(R.id.description_tv);
-        TextView tvOrigin = findViewById(R.id.origin_tv);
-        TextView tvAka = findViewById(R.id.also_known_tv);
-        TextView tvIngredients = findViewById(R.id.ingredients_tv);
+
 
         // Set the TextViews
         tvDescription.setText(sandwich.getDescription());
@@ -75,44 +86,40 @@ public class DetailActivity extends AppCompatActivity {
         // Need a List of String for the AKA.
         List<String> akaList =  sandwich.getAlsoKnownAs();
 
-        // Get a StringBuilder object to start extracting the List of Strings
-        StringBuilder extractedAKAList = new StringBuilder();
-
-        for(int i = 0; i < akaList.size(); i++) {
-
-            extractedAKAList.append(akaList.get(i));
-
-            // If the sandwich has multiple AKAs add commas and spacing but only if it's not the
-            // end
-            if(i < akaList.size() -1){
-                extractedAKAList.append(", ");
-            }
-
-        }
-
         // Once AKA list is completed extracting in the StringBuilder set text in UI.
-        tvAka.setText(extractedAKAList.toString());
-
-        // Create a new StringBuilder object for the ingredients
-        StringBuilder extractedIngredients = new StringBuilder();
+        tvAka.setText(extractedList(akaList));
 
         // Create a new List of Strings for ingredients.
         List<String> ingredientsList = sandwich.getIngredients();
 
-        for(int i = 0; i < ingredientsList.size(); i++ ) {
-
-            extractedIngredients.append(ingredientsList.get(i));
-
-            // If there are multiple ingredients in the list. Put it on the next line.
-            if(i < ingredientsList.size() -1) {
-                extractedIngredients.append("\n");
-            }
-        }
-
         // Once the StringBuilder operation is complete place it in the UI.
-        tvIngredients.setText(extractedIngredients.toString());
+        tvIngredients.setText(extractedList(ingredientsList));
 
 
 
     }
+
+    public String extractedList (List<String> sandwiches) {
+
+        String finished ="";
+
+        // Get a StringBuilder object to start extracting the List of Strings
+        StringBuilder extractedAKAList = new StringBuilder();
+
+        for(int i = 0; i < sandwiches.size(); i++) {
+
+            extractedAKAList.append(sandwiches.get(i));
+
+            // If the sandwich has multiple AKAs add commas and spacing but only if it's not the
+            // end
+            if(i < sandwiches.size() -1){
+                extractedAKAList.append(", ");
+            }
+            finished = extractedAKAList.toString();
+
+
+        }
+        return finished;
+    }
+
 }

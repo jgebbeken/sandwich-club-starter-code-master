@@ -9,12 +9,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
+
 // ParseSandwichJson Developed By Josh Gebbeken for Android Development Nanodegree. 4/25/2018
 
 
 public class JsonUtils {
 
+    private final static String NAME = "name";
+    private final static String MAIN_NAME = "mainName";
+    private final static String ALSO_KNOWN_AS = "alsoKnownAs";
+    private final static String POE = "placeOfOrigin";
+    private final static String DESCRIPTION = "description";
+    private final static String IMAGE = "image";
+    private final static String INGREDIENTS = "ingredients";
+
+
+
     public static Sandwich parseSandwichJson(String json) {
+
+
 
 
         //Create the sandwich object
@@ -22,35 +36,25 @@ public class JsonUtils {
 
         // In the JSON the object has an JSON array called ingredients. We need a list to store this
         // Data. The AKA has another JSON array as well. So another list is needed.
-        List<String> ingredientsList = new ArrayList<>();
-        List<String> alsoKnownAsList = new ArrayList<>();
+        List<String> ingredientsList;
+        List<String> alsoKnownAsList;
 
 
 
         //This JSON has an object within an object so we get the "name" JSON object.
         try {
-            JSONObject sandwiches = new JSONObject(json).getJSONObject("name");
+            JSONObject sandwiches = new JSONObject(json).getJSONObject(NAME);
 
             //Set the main name
-            sandwich.setMainName(sandwiches.getString("mainName"));
+            sandwich.setMainName(sandwiches.getString(MAIN_NAME));
 
 
 
             // The array has a list of Strings for the AKA. We don't know how many there is so we
             // have to grab each of them if any.
-            JSONArray sandwichArray = sandwiches.getJSONArray("alsoKnownAs");
+            JSONArray sandwichArray = sandwiches.getJSONArray(ALSO_KNOWN_AS);
 
-            for(int i = 0; i < sandwichArray.length(); i++) {
-
-                // Add item in the Object array.
-                alsoKnownAsList.add(sandwichArray.getString(i));
-            }
-
-            // Checking to see if any data was added to the list. If there is no data put One String
-            // with a space in it to fix any null pointer exceptions.
-            if(alsoKnownAsList.isEmpty()) {
-                alsoKnownAsList.add(" ");
-            }
+            alsoKnownAsList = extractList(sandwichArray);
 
             // Now add alsoKnownAsList to the sandwich object
             sandwich.setAlsoKnownAs(alsoKnownAsList);
@@ -61,26 +65,18 @@ public class JsonUtils {
             sandwiches = new JSONObject(json);
 
             //Set each item using the sandwich setter.
-            sandwich.setPlaceOfOrigin(sandwiches.getString("placeOfOrigin"));
-            sandwich.setDescription(sandwiches.getString("description"));
-            sandwich.setImage(sandwiches.getString("image"));
+            sandwich.setPlaceOfOrigin(sandwiches.getString(POE));
+            sandwich.setDescription(sandwiches.getString(DESCRIPTION));
+            sandwich.setImage(sandwiches.getString(IMAGE));
 
 
             //Create the JSON ingredients array
-            JSONArray sandwichIngredients = sandwiches.getJSONArray("ingredients");
+            JSONArray sandwichIngredients = sandwiches.getJSONArray(INGREDIENTS);
 
             // Since we don't know how many ingredients will be in the array. We need loop in till
             // we have all of it.
-            for(int i = 0; i < sandwichIngredients.length(); i++){
+            ingredientsList = extractList(sandwichIngredients);
 
-                ingredientsList.add(sandwichIngredients.getString(i));
-            }
-
-            // Make sure there are any ingredients in the list before proceeding. If the list is
-            // empty, then put one empty String with a space in it to remove any null pointer exceptions
-            if(ingredientsList.isEmpty()) {
-                ingredientsList.add(" ");
-            }
             sandwich.setIngredients(ingredientsList);
 
 
@@ -93,5 +89,26 @@ public class JsonUtils {
 
 
         return sandwich;
+    }
+
+    private static List<String> extractList(JSONArray incoming) {
+
+        List<String> extracted = new ArrayList<>();
+        for (int i = 0; i < incoming.length(); i++) {
+
+            // Add item in the Object array.
+            try {
+                extracted.add(incoming.getString(i));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        if (extracted.isEmpty()){
+            extracted.add(" ");
+        }
+
+        return extracted;
     }
 }
